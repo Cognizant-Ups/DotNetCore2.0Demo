@@ -1,6 +1,6 @@
 using System;
 
-namespace NaveenCore2.Models
+namespace DotNetCore2.Models
 {
     public class ErrorViewModel
     {

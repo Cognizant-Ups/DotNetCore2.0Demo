@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using NaveenCore2.Models;
+using DotNetCore2.Models;
 
-namespace NaveenCore2.Controllers
+namespace DotNetCore2.Controllers
 {
     public class HomeController : Controller
     {
