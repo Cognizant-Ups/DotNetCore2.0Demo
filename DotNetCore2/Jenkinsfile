@@ -4,6 +4,9 @@ applicationId = env.APP_ID
 // Declare application name
 application = env.APP_NAME
 
+// Declare application type java or dot-net
+applicationType = env.APP_TYPE
+
 // Declare microservice name
 microservice = env.MICROSERVICE_NAME
 
@@ -19,6 +22,10 @@ gitURL = env.GIT_URL
 gitContextDir = env.GIT_CONTEXT_DIR
 gitBranch = env.GIT_BRANCH
 gitCommit = null
+
+// Pull in default Jenkinsfile
+masterJenkinsfileGitURL = env.CICD_GIT_URL
+masterJenkinsfileGitBranch = env.CICD_GIT_BRANCH
 
 // Build requests and limits
 buildCPURequest = '100m'
@@ -52,7 +59,13 @@ node() {
         versionNumber = '0.0.1'
         print "POM Artifact Version:: ${versionNumber}"
 
-        pipeline = load "${repoName}/infrastructure/jenkins/Jenkinsfile"
+        repoName = masterJenkinsfileGitURL.replaceAll("\\.git", "").split("/")[-1]
+        print "Master Jenkinsfile Git URL: ${masterJenkinsfileGitURL}, Repository Name:: ${repoName}"
+
+        // Checkout the external Jenkinsfile
+        gitCheckout(workspace, masterJenkinsfileGitURL, masterJenkinsfileGitBranch, gitCredentialsId, repoName)
+
+        pipeline = load '${repoName}/master-pipeline/${applicationType}/Jenkinsfile'
 }
 
 pipeline.main()
@@ -70,6 +83,8 @@ def gitCheckout(String workspace, String url, String branch, String credentialsI
                 sh """
                         rm -rf ${repository}
                         git clone -b ${branch} ${url}
+                        cd ${workspace}
+                        echo `pwd && ls -l`
                 """
         }
 }
